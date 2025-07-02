@@ -48,7 +48,29 @@ fi
 
 # Update submodules to latest commits
 echo "🔄 Updating submodules to latest versions..."
-git submodule update --remote --merge
+if git submodule update --remote --merge 2>/dev/null; then
+    echo "✅ Submodules updated successfully!"
+else
+    echo "⚠️  Warning: Some submodule commits may not be available remotely"
+    echo "   Falling back to existing commit references..."
+    git submodule update --init --recursive
+fi
+
+# Ensure submodules are on master branch for development
+echo "🔧 Setting up submodules for development..."
+if [ -d "tsa-task-tracker-api" ]; then
+    cd tsa-task-tracker-api
+    git checkout master 2>/dev/null || git checkout main 2>/dev/null || echo "   → API: Using current branch"
+    cd ..
+fi
+
+if [ -d "tsa-task-tracker-frontend" ]; then
+    cd tsa-task-tracker-frontend  
+    git checkout master 2>/dev/null || git checkout main 2>/dev/null || echo "   → Frontend: Using current branch"
+    cd ..
+fi
+
+echo "✅ Submodules ready for development!"
 
 # Check if there are submodule updates to commit
 if ! git diff-index --quiet HEAD -- tsa-task-tracker-api tsa-task-tracker-frontend; then
