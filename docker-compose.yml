@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  api:
+    build: 
+      context: ./tsa-task-tracker-api
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+    volumes:
+      # These lines are crucial for hot reloading
+      - ./tsa-task-tracker-api/src:/app/src
+      - /app/node_modules
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./tsa-task-tracker-frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:3000
+    volumes:
+      # These lines are crucial for hot reloading
+      - ./tsa-task-tracker-frontend/src:/app/src
+      - ./tsa-task-tracker-frontend/public:/app/public
+      - /app/node_modules
+    depends_on:
+      - api
+    networks:
+      - app-network
+    restart: unless-stopped
+
+networks:
+  app-network:
+    driver: bridge
