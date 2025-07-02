@@ -253,7 +253,6 @@ if COMPOSE_API_VERSION=auto docker-compose ps 2>/dev/null | grep -q "Up" || dock
     echo "   → Open project in VS Code: code ."
     echo ""
     echo "Happy coding! 🚀"
-    cd tsa-task-tracker
 else
     echo "❌ Something went wrong. Check logs with: docker-compose logs"
     exit 1
