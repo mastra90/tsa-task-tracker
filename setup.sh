@@ -60,6 +60,31 @@ else
     echo "✅ Submodules already at latest versions!"
 fi
 
+# Install dependencies for local development
+echo "📚 Installing dependencies for IDE support..."
+
+if [ -f "tsa-task-tracker-api/package.json" ]; then
+    echo "   → Installing API dependencies..."
+    cd tsa-task-tracker-api
+    npm install --silent
+    cd ..
+    echo "   ✅ API dependencies installed"
+else
+    echo "   ⚠️  API package.json not found, skipping..."
+fi
+
+if [ -f "tsa-task-tracker-frontend/package.json" ]; then
+    echo "   → Installing frontend dependencies..."
+    cd tsa-task-tracker-frontend
+    npm install --silent
+    cd ..
+    echo "   ✅ Frontend dependencies installed"
+else
+    echo "   ⚠️  Frontend package.json not found, skipping..."
+fi
+
+echo "✅ Local development environment ready for IDE!"
+
 # Verify Dockerfiles exist
 if [ ! -f "tsa-task-tracker-api/Dockerfile" ]; then
     echo "❌ Error: Dockerfile not found in tsa-task-tracker-api/"
@@ -96,6 +121,7 @@ if docker-compose ps | grep -q "Up"; then
     echo "   → View logs: docker-compose logs"
     echo "   → Stop app: docker-compose down"
     echo "   → Restart: docker-compose restart"
+    echo "   → Open project in VS Code: code ."
     echo ""
     echo "Happy coding! 🚀"
 else
