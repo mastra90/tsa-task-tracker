@@ -2,6 +2,36 @@
 
 echo "🚀 Setting up TSA Task Tracker..."
 
+# Check if Docker is installed
+if ! command -v docker >/dev/null 2>&1; then
+    echo ""
+    echo "❌ Docker not found!"
+    echo ""
+    echo "📋 To run this application, you need to install Docker Desktop:"
+    echo "   → Visit: https://www.docker.com/products/docker-desktop/"
+    echo "   → Download and install Docker Desktop for your system"
+    echo "   → After installation, close this terminal and run the command again"
+    echo ""
+    echo "💡 Docker Desktop includes everything needed (Docker + Docker Compose)"
+    echo ""
+    exit 1
+fi
+
+# Check if Docker Compose is available
+if ! command -v docker-compose >/dev/null 2>&1 && ! docker compose version >/dev/null 2>&1; then
+    echo ""
+    echo "❌ Docker Compose not found!"
+    echo ""
+    echo "📋 Docker Compose is required to run this application:"
+    echo "   → If you have Docker Desktop: restart it and try again"
+    echo "   → If you have Docker Engine only: install docker-compose"
+    echo "   → Visit: https://docs.docker.com/compose/install/"
+    echo ""
+    exit 1
+fi
+
+echo "✅ Docker found and ready!"
+
 # Check if .gitmodules exists (proper submodule setup)
 if [ ! -f ".gitmodules" ]; then
     echo "⚠️  No .gitmodules found. Setting up submodules properly..."
