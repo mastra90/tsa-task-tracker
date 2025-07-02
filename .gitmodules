@@ -1,0 +1,6 @@
+[submodule "tsa-task-tracker-api"]
+	path = tsa-task-tracker-api
+	url = https://github.com/mastra90/tsa-task-tracker-api.git
+[submodule "tsa-task-tracker-frontend"]
+	path = tsa-task-tracker-frontend
+	url = https://github.com/mastra90/tsa-task-tracker-frontend.git
