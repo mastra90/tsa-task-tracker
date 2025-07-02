@@ -46,6 +46,20 @@ if [ ! -f "tsa-task-tracker-frontend/package.json" ] || [ ! -f "tsa-task-tracker
     git submodule update --init --recursive
 fi
 
+# Update submodules to latest commits
+echo "🔄 Updating submodules to latest versions..."
+git submodule update --remote --merge
+
+# Check if there are submodule updates to commit
+if ! git diff-index --quiet HEAD -- tsa-task-tracker-api tsa-task-tracker-frontend; then
+    echo "💾 Committing submodule updates..."
+    git add tsa-task-tracker-api tsa-task-tracker-frontend
+    git commit -m "Update submodules to latest commits"
+    echo "✅ Submodules updated to latest versions!"
+else
+    echo "✅ Submodules already at latest versions!"
+fi
+
 # Verify Dockerfiles exist
 if [ ! -f "tsa-task-tracker-api/Dockerfile" ]; then
     echo "❌ Error: Dockerfile not found in tsa-task-tracker-api/"
