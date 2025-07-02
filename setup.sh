@@ -22,8 +22,7 @@ if ! command -v docker >/dev/null 2>&1; then
     echo "📋 To run this application, you need to install Docker Desktop:"
     echo "   → Visit: https://www.docker.com/products/docker-desktop/"
     echo "   → Download and install Docker Desktop for your system"
-    echo "   → After installation, open Docker and run through the initial Docker setup (login not required and can be skipped)"
-    echo "   → When you get to the Docker home screen, you can quit the application"
+    echo "   → After installation, run through the initial Docker setup (login not required and can be skipped)"
     echo "   → Close this terminal and run the command again"
     echo ""
     echo "💡 Docker Desktop includes everything needed (Docker + Docker Compose)"
@@ -44,7 +43,71 @@ if ! command -v docker-compose >/dev/null 2>&1 && ! docker compose version >/dev
     exit 1
 fi
 
-echo "✅ Docker found and ready!"
+# Check if Docker daemon is running
+echo "🔍 Checking Docker daemon..."
+if ! docker info >/dev/null 2>&1; then
+    echo "⚠️  Docker daemon not running. Starting Docker..."
+    
+    # Try to start Docker on different platforms
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        # macOS
+        echo "   → Starting Docker Desktop on macOS..."
+        open -a Docker
+        echo "   → Waiting for Docker to start..."
+        # Wait for Docker to be ready (up to 60 seconds)
+        for i in {1..60}; do
+            if docker info >/dev/null 2>&1; then
+                echo "   ✅ Docker started successfully!"
+                break
+            fi
+            if [ $i -eq 60 ]; then
+                echo ""
+                echo "❌ Docker failed to start automatically!"
+                echo ""
+                echo "📋 Please start Docker manually:"
+                echo "   → Open Docker Desktop from Applications"
+                echo "   → Wait for Docker to start (whale icon in menu bar)"
+                echo "   → Close the terminal and run the command again."
+                echo ""
+                exit 1
+            fi
+            sleep 1
+        done
+    elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+        # Linux
+        echo "   → Starting Docker on Linux..."
+        if command -v systemctl >/dev/null 2>&1; then
+            sudo systemctl start docker
+            sleep 3
+            if docker info >/dev/null 2>&1; then
+                echo "   ✅ Docker started successfully!"
+            else
+                echo "❌ Failed to start Docker"
+                echo "   → Please start it manually: sudo systemctl start docker"
+                echo "   → Close the terminal and run the command again"
+                exit 1
+            fi
+        else
+            echo "❌ Cannot auto-start Docker"
+            echo "   → Please start Docker manually"
+            echo "   → Close the terminal and run the command again"
+            exit 1
+        fi
+    else
+        # Windows or other
+        echo ""
+        echo "❌ Docker daemon not running!"
+        echo ""
+        echo "📋 Please start Docker manually:"
+        echo "   → Open Docker Desktop"
+        echo "   → Wait for Docker to start completely"
+        echo "   → Close the terminal and run the command again"
+        echo ""
+        exit 1
+    fi
+else
+    echo "✅ Docker daemon is running!"
+fi
 
 # Check if .gitmodules exists (proper submodule setup)
 if [ ! -f ".gitmodules" ]; then
@@ -167,15 +230,15 @@ fi
 echo "🐳 Building and starting application..."
 echo "   This may take a minute on first run..."
 
-# Start Docker in detached mode (background)
-docker-compose up --build -d
+# Start Docker in detached mode (background) - suppress version warning
+COMPOSE_API_VERSION=auto docker-compose up --build -d 2>/dev/null || docker-compose up --build -d
 
 # Wait for services to be ready
 echo "⏳ Waiting for services to start..."
 sleep 10
 
-# Check if services are running
-if docker-compose ps | grep -q "Up"; then
+# Check if services are running - suppress version warning
+if COMPOSE_API_VERSION=auto docker-compose ps 2>/dev/null | grep -q "Up" || docker-compose ps | grep -q "Up"; then
     echo ""
     echo "🎉 Setup complete!"
     echo ""
