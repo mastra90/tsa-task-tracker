@@ -2,6 +2,18 @@
 
 echo "🚀 Setting up TSA Task Tracker..."
 
+# Check if we're in the right directory (avoid accidental deletion)
+if [ ! -f "setup.sh" ] && [ -d "tsa-task-tracker" ]; then
+    echo "🗑️  Removing existing directory..."
+    rm -rf tsa-task-tracker
+    echo "✅ Directory cleaned up!"
+fi
+
+# If we're already in the project directory, continue
+if [ -f "setup.sh" ]; then
+    echo "✅ Already in project directory, continuing setup..."
+fi
+
 # Check if Docker is installed
 if ! command -v docker >/dev/null 2>&1; then
     echo ""
@@ -10,7 +22,9 @@ if ! command -v docker >/dev/null 2>&1; then
     echo "📋 To run this application, you need to install Docker Desktop:"
     echo "   → Visit: https://www.docker.com/products/docker-desktop/"
     echo "   → Download and install Docker Desktop for your system"
-    echo "   → After installation, close this terminal and run the command again"
+    echo "   → After installation, open Docker and run through the initial Docker setup (login not required and can be skipped)"
+    echo "   → When you get to the Docker home screen, you can quit the application"
+    echo "   → Close this terminal and run the command again"
     echo ""
     echo "💡 Docker Desktop includes everything needed (Docker + Docker Compose)"
     echo ""
