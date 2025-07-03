@@ -50,6 +50,7 @@ After the command is successful, the application will be available at:
 - **NestJS** with TypeScript
 - **Node.js 22** runtime
 - **RESTful API** architecture
+- **Jest** testing framework with unit tests
 - **Hot reloading** enabled for development
 
 ### DevOps
@@ -60,13 +61,44 @@ After the command is successful, the application will be available at:
 
 ## 🌐 Features
 
-- ✅ Task management with completion status
+- ✅ Create, read, update, and delete tasks
 - 🎯 Filter tasks by completion status
+- ✏️ Inline editing with validation
+- ✨ Smooth animations and hover effects
 - 🎨 Modern dark theme UI
 - 📱 Responsive design
 - 🔄 Real time updates
+- 🧪 Unit tests for API endpoints
 - 🐳 Fully containerized with Docker
 - 🔥 Hot reloading for development
+
+## 🧪 Testing
+
+The backend includes unit tests covering core functionality:
+
+### Running Tests
+
+```bash
+# Navigate to the API directory
+cd tsa-task-tracker-api
+
+# Install dependencies (if not using Docker)
+npm install
+
+# Run all tests
+npm run test
+
+# Run tests in watch mode
+npm run test:watch
+```
+
+### Test Coverage
+
+- **Controller Tests**: All CRUD operations (GET, POST, PUT, DELETE)
+- **Service Tests**: Task management and ID generation
+- **Basic validation**: Error handling for invalid requests
+
+Tests are located in `src/*.spec.ts` files alongside the source code.
 
 ## 📁 Project Structure
 
