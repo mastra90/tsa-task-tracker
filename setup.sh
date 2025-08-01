@@ -234,12 +234,32 @@ echo "   This may take a minute on first run..."
 echo "🔄 Stopping any existing containers..."
 docker compose down 2>/dev/null || true
 
+# Kill any containers using our required ports
+echo "🔧 Freeing up ports 3000 and 5173..."
+CONTAINERS_ON_3000=$(docker ps --filter "publish=3000" -q 2>/dev/null)
+CONTAINERS_ON_5173=$(docker ps --filter "publish=5173" -q 2>/dev/null)
+
+if [ ! -z "$CONTAINERS_ON_3000" ]; then
+    echo "   → Stopping containers using port 3000..."
+    docker stop $CONTAINERS_ON_3000 2>/dev/null || true
+fi
+
+if [ ! -z "$CONTAINERS_ON_5173" ]; then
+    echo "   → Stopping containers using port 5173..."
+    docker stop $CONTAINERS_ON_5173 2>/dev/null || true
+fi
+
+echo "✅ Ports cleared!"
+
+# Start Docker in detached mode (background) - use modern docker compose syntax
+docker compose up --build -d
+
 # Start Docker in detached mode (background)
 docker compose up --build -d
 
 # Wait for services to be ready
 echo "⏳ Waiting for services to start..."
-sleep 5
+sleep 10
 
 # Simple and reliable health check - just see if we have any running containers
 RUNNING_CONTAINERS=$(docker compose ps -q 2>/dev/null | wc -l | tr -d ' ')
