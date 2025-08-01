@@ -251,15 +251,22 @@ fi
 
 echo "✅ Ports cleared!"
 
-# Start Docker in detached mode (background) - use modern docker compose syntax
-docker compose up --build -d
-
-# Start Docker in detached mode (background)
-docker compose up --build -d
+# Start Docker with fallback for older systems
+if docker compose up --build -d 2>/dev/null; then
+    echo "✅ Started with docker compose"
+else
+    echo "   → Trying legacy docker-compose..."
+    docker-compose up --build -d
+fi
 
 # Wait for services to be ready
-echo "⏳ Waiting for services to start..."
-sleep 3
+echo "⏳ Services starting in..."
+echo "⏳ 3..."
+sleep 1
+echo "⏳ 2..."
+sleep 1
+echo "⏳ 1..."
+sleep 1
 
 # Simple and reliable health check - just see if we have any running containers
 RUNNING_CONTAINERS=$(docker compose ps -q 2>/dev/null | wc -l | tr -d ' ')
@@ -281,6 +288,12 @@ if [ "$RUNNING_CONTAINERS" -gt 0 ]; then
     echo "🔍 Check service status: docker compose ps"
     echo ""
     echo "Happy coding! 🚀"
+    echo "🌐 Opening application in browser..."
+    python3 -m webbrowser http://localhost:5173 2>/dev/null || \
+    python -m webbrowser http://localhost:5173 2>/dev/null || \
+    open http://localhost:5173 2>/dev/null || \
+    start http://localhost:5173 2>/dev/null || \
+    echo "   → Please open http://localhost:5173 manually"
 else
     echo "❌ No containers are running. Checking what happened..."
     echo ""
