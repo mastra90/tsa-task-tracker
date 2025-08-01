@@ -238,7 +238,10 @@ echo "⏳ Waiting for services to start..."
 sleep 10
 
 # Check if services are running - suppress version warning
-if COMPOSE_API_VERSION=auto docker-compose ps 2>/dev/null | grep -q "Up" || docker-compose ps | grep -q "Up"; then
+# if COMPOSE_API_VERSION=auto docker-compose ps 2>/dev/null | grep -q "Up" || docker-compose ps | grep -q "Up"; then
+
+# Check if services are running
+if docker compose ps --services --filter "status=running" | wc -l | grep -q -v "^0$"; then
     echo ""
     echo "🎉 Setup complete!"
     echo ""
