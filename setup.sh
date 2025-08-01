@@ -227,22 +227,12 @@ if [ ! -f "tsa-task-tracker-frontend/Dockerfile" ]; then
     exit 1
 fi
 
-# Kill any processes using our required ports
-echo "🔧 Freeing up required ports..."
-if ss -tulpn | grep -q :3000; then
-    echo "   → Killing process on port 3000..."
-    sudo fuser -k 3000/tcp 2>/dev/null || true
-fi
-
-if ss -tulpn | grep -q :5173; then
-    echo "   → Killing process on port 5173..."
-    sudo fuser -k 5173/tcp 2>/dev/null || true
-fi
-
-echo "✅ Ports cleared!"
-
 echo "🐳 Building and starting application..."
 echo "   This may take a minute on first run..."
+
+# Stop any existing containers first
+echo "🔄 Stopping any existing containers..."
+docker compose down 2>/dev/null || true
 
 # Start Docker in detached mode (background)
 docker compose up --build -d
