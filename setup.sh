@@ -227,6 +227,20 @@ if [ ! -f "tsa-task-tracker-frontend/Dockerfile" ]; then
     exit 1
 fi
 
+# Kill any processes using our required ports
+echo "🔧 Freeing up required ports..."
+if lsof -ti:3000 >/dev/null 2>&1; then
+    echo "   → Killing process on port 3000..."
+    lsof -ti:3000 | xargs kill -9 2>/dev/null || true
+fi
+
+if lsof -ti:5173 >/dev/null 2>&1; then
+    echo "   → Killing process on port 5173..."
+    lsof -ti:5173 | xargs kill -9 2>/dev/null || true
+fi
+
+echo "✅ Ports cleared!"
+
 echo "🐳 Building and starting application..."
 echo "   This may take a minute on first run..."
 
@@ -235,7 +249,7 @@ docker compose up --build -d
 
 # Wait for services to be ready
 echo "⏳ Waiting for services to start..."
-sleep 10
+sleep 5
 
 # Simple and reliable health check - just see if we have any running containers
 RUNNING_CONTAINERS=$(docker compose ps -q 2>/dev/null | wc -l | tr -d ' ')
