@@ -259,7 +259,7 @@ docker compose up --build -d
 
 # Wait for services to be ready
 echo "⏳ Waiting for services to start..."
-sleep 10
+sleep 3
 
 # Simple and reliable health check - just see if we have any running containers
 RUNNING_CONTAINERS=$(docker compose ps -q 2>/dev/null | wc -l | tr -d ' ')
