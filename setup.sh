@@ -237,11 +237,10 @@ COMPOSE_API_VERSION=auto docker-compose up --build -d 2>/dev/null || docker-comp
 echo "⏳ Waiting for services to start..."
 sleep 10
 
-# Check if services are running - suppress version warning
-# if COMPOSE_API_VERSION=auto docker-compose ps 2>/dev/null | grep -q "Up" || docker-compose ps | grep -q "Up"; then
+# Simple and reliable health check - just see if we have any running containers
+RUNNING_CONTAINERS=$(docker compose ps -q 2>/dev/null | wc -l | tr -d ' ')
 
-# Check if services are running
-if docker compose ps --services --filter "status=running" | wc -l | grep -q -v "^0$"; then
+if [ "$RUNNING_CONTAINERS" -gt 0 ]; then
     echo ""
     echo "🎉 Setup complete!"
     echo ""
@@ -250,13 +249,24 @@ if docker compose ps --services --filter "status=running" | wc -l | grep -q -v "
     echo "   → Backend API: http://localhost:3000"
     echo ""
     echo "📋 Useful commands:"
-    echo "   → View logs: docker-compose logs"
-    echo "   → Stop app: docker-compose down"
-    echo "   → Restart: docker-compose restart"
+    echo "   → View logs: docker compose logs"
+    echo "   → Stop app: docker compose down"
+    echo "   → Restart: docker compose restart"
     echo "   → Open project in VS Code: code ."
+    echo ""
+    echo "🔍 Check service status: docker compose ps"
     echo ""
     echo "Happy coding! 🚀"
 else
-    echo "❌ Something went wrong. Check logs with: docker-compose logs"
+    echo "❌ No containers are running. Checking what happened..."
+    echo ""
+    echo "📋 Troubleshooting steps:"
+    echo "   1. Check logs: docker compose logs"
+    echo "   2. Check status: docker compose ps"
+    echo "   3. Try manual start: docker compose up --build"
+    echo ""
+    # Still show the logs to help debug
+    echo "🔍 Recent logs:"
+    docker compose logs --tail=20 2>/dev/null || echo "   (No logs available)"
     exit 1
 fi
