@@ -229,14 +229,14 @@ fi
 
 # Kill any processes using our required ports
 echo "🔧 Freeing up required ports..."
-if lsof -ti:3000 >/dev/null 2>&1; then
+if ss -tulpn | grep -q :3000; then
     echo "   → Killing process on port 3000..."
-    lsof -ti:3000 | xargs kill -9 2>/dev/null || true
+    sudo fuser -k 3000/tcp 2>/dev/null || true
 fi
 
-if lsof -ti:5173 >/dev/null 2>&1; then
+if ss -tulpn | grep -q :5173; then
     echo "   → Killing process on port 5173..."
-    lsof -ti:5173 | xargs kill -9 2>/dev/null || true
+    sudo fuser -k 5173/tcp 2>/dev/null || true
 fi
 
 echo "✅ Ports cleared!"
