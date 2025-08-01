@@ -230,8 +230,8 @@ fi
 echo "🐳 Building and starting application..."
 echo "   This may take a minute on first run..."
 
-# Start Docker in detached mode (background) - suppress version warning
-COMPOSE_API_VERSION=auto docker-compose up --build -d 2>/dev/null || docker-compose up --build -d
+# Start Docker in detached mode (background)
+docker compose up --build -d
 
 # Wait for services to be ready
 echo "⏳ Waiting for services to start..."
